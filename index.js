@@ -24,12 +24,22 @@ window.onload = async () => {
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     minZoom: "15",
   }).addTo(myMap);
-  const home = L.marker([coords.coords.latitude, coords.coords.longitude]);
-  home.addTo(myMap).bindPopup(`<b>I SEE YOU</b><br>Latitude: ${lat}<br>Longitude: ${long}`).openPopup();
+  var myIcon = L.icon({
+    iconUrl: "./assets/14444838041553668337-128.png",
+    iconSize: [30, 30],
+  });
+
+  const home = L.marker([coords.coords.latitude, coords.coords.longitude], {
+    icon: myIcon,
+  });
+  home
+    .addTo(myMap)
+    .bindPopup(`<b>I SEE YOU</b><br>Latitude: ${lat}<br>Longitude: ${long}`)
+    .openPopup();
 };
 
 // FourSquare API - Five Nearest Locations (specific business type)
-async function findShops(query) {
+async function findShops(query, myIcon) {
   const options = {
     method: "GET",
     headers: {
@@ -44,13 +54,16 @@ async function findShops(query) {
   const data = await response.text();
   let parseData = JSON.parse(data);
   let businesses = parseData.results;
-  console.log(businesses)
+  console.log(businesses);
   businesses.forEach((business) => {
     let marker = L.marker([
       business.geocodes.main.latitude,
       business.geocodes.main.longitude,
-    ]);
-    marker.addTo(myMap).bindPopup(`<b>${business.name}</b><br>${business.location.address}`).openPopup();
+    ], {icon: myIcon});
+    marker
+      .addTo(myMap)
+      .bindPopup(`<b>${business.name}</b><br>${business.location.address}`)
+      .openPopup();
   });
 }
 
@@ -58,12 +71,28 @@ async function findShops(query) {
 function hotSpots() {
   let place = document.querySelector("#business");
   if (place.value === "coffee") {
-    findShops("coffee");
+    var myIcon = L.icon({
+      iconUrl: "assets/coffee.png",
+      iconSize: [30, 30],
+    });
+    findShops("coffee", myIcon);
   } else if (place.value === "restaurant") {
-    findShops("restaurant");
+    var myIcon = L.icon({
+      iconUrl: "assets/restaurant.png.crdownload",
+      iconSize: [30, 30],
+    });
+    findShops("restaurant", myIcon);
   } else if (place.value === "hotel") {
-    findShops("hotel");
+    var myIcon = L.icon({
+      iconUrl: "assets/hotel-icon.png",
+      iconSize: [30, 30],
+    });
+    findShops("hotel", myIcon);
   } else if (place.value === "market") {
-    findShops("grocery");
+    var myIcon = L.icon({
+      iconUrl: "assets/grocery.png",
+      iconSize: [30, 30],
+    });
+    findShops("grocery", myIcon);
   }
 }
